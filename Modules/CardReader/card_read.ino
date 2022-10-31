@@ -55,6 +55,8 @@ void loop() {
    Serial.print(F("In dec: "));
    printDec(rfid.uid.uidByte, rfid.uid.size);
    Serial.println();
+   createJson(rfid.uid.uidByte, rfid.uid.size);
+   Serial.println();
  }
  else Serial.println(F("Card read previously."));
  // Halt PICC
@@ -75,8 +77,39 @@ void printHex(byte *buffer, byte bufferSize) {
    Helper routine to dump a byte array as dec values to Serial.
 */
 void printDec(byte *buffer, byte bufferSize) {
- for (byte i = 0; i < bufferSize; i++) {
-   Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-   Serial.print(buffer[i], DEC);
+  for (byte i = 0; i < bufferSize; i++)
+  {
+     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
+    // Serial.print(buffer[i], DEC);
+     Serial.print(buffer[i], BIN);
  }
 }
+
+void createJson(byte *buffer, byte bufferSize)
+{
+  char chars[4 * bufferSize];
+  for (byte i = 0, cur = 0; i < bufferSize; i++)
+  {
+    if (i)
+      sprintf(&chars[cur++], "%c", ' ');
+    byte bits[2];
+    bits[0] = (buffer[i] & 0xf0) >> 4;
+    bits[1] = buffer[i] & 0x0f;
+    sprintf(&chars[cur++], "%X", bits[0]);
+    sprintf(&chars[cur++], "%X", bits[1]);
+    if (i == bufferSize - 1)
+      chars[cur + 1] = '\0';
+  }
+  // Null-terminate the string
+  Serial.print('\n');
+  Serial.print(chars);
+  Serial.print('\n');
+  StaticJsonDocument<200> jsonBuffer;
+  jsonBuffer["uuid"] = chars;
+  jsonBuffer["name"] = "lantingfeng";
+  jsonBuffer["tel"] = "10101010101";
+  String output;
+  serializeJson(jsonBuffer, output); // 序列化JSON数据并导出字符串
+  Serial.println(output);
+}
+ 
