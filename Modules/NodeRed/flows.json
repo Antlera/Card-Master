@@ -1,0 +1,212 @@
+[
+    {
+        "id": "638753f655bc9ed7",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "379b80b66b110197",
+        "type": "mqtt out",
+        "z": "638753f655bc9ed7",
+        "name": "MqttOut",
+        "topic": "antlers/nodered/mysql",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "4184894bd3e3d930",
+        "x": 300,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "079a6c2b38079b28",
+        "type": "inject",
+        "z": "638753f655bc9ed7",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"request\":\"insert\",\"uuid\":\"2019141480012\",\"name\":\"lan\",\"tel\":\"13125258877\"}",
+        "payloadType": "str",
+        "x": 130,
+        "y": 540,
+        "wires": [
+            [
+                "379b80b66b110197"
+            ]
+        ]
+    },
+    {
+        "id": "36fee4e9c8e102bd",
+        "type": "mqtt in",
+        "z": "638753f655bc9ed7",
+        "name": "MqttIn",
+        "topic": "antlers/nodered/mysql",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "4184894bd3e3d930",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "6a761fd5865bf7d0"
+            ]
+        ]
+    },
+    {
+        "id": "7bcb59f55f2b0c01",
+        "type": "function",
+        "z": "638753f655bc9ed7",
+        "name": "PrepareStatement",
+        "func": "// msg.payload=[24, 'example-user',1561161];\n// msg.topic=\"INSERT INTO Students (`uuid`, `name`,`tel`) VALUES (?, ?, ?);\"\nvar sql = {\"insert\":\"INSERT INTO Students (`uuid`, `name`,`tel`) VALUES (?, ?, ?);\"}\nvar payload = msg[\"payload\"];\nvar request = payload[\"request\"];\nmsg.payload=[payload[\"uuid\"],payload[\"name\"],payload[\"tel\"]];\nmsg.topic=sql[request]\n// msg.payload={\"payload\":payload};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 440,
+        "wires": [
+            [
+                "3093516333700655",
+                "5cc98efb8e4ef700"
+            ]
+        ]
+    },
+    {
+        "id": "3093516333700655",
+        "type": "debug",
+        "z": "638753f655bc9ed7",
+        "name": "StringProcessed",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "6a761fd5865bf7d0",
+        "type": "json",
+        "z": "638753f655bc9ed7",
+        "name": "JsonParser",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 290,
+        "y": 440,
+        "wires": [
+            [
+                "7bcb59f55f2b0c01",
+                "e1aadb6b4b7956ca"
+            ]
+        ]
+    },
+    {
+        "id": "e1aadb6b4b7956ca",
+        "type": "debug",
+        "z": "638753f655bc9ed7",
+        "name": "JsonParsed",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "5cc98efb8e4ef700",
+        "type": "mysql",
+        "z": "638753f655bc9ed7",
+        "mydb": "16a82317fb46fb17",
+        "name": "MysqlDatabase",
+        "x": 740,
+        "y": 440,
+        "wires": [
+            [
+                "fe5ec99783074d56"
+            ]
+        ]
+    },
+    {
+        "id": "fe5ec99783074d56",
+        "type": "debug",
+        "z": "638753f655bc9ed7",
+        "name": "SqlResult",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "4184894bd3e3d930",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "iot.ranye-iot.net",
+        "port": "1883",
+        "clientid": "antlers_4_id",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "16a82317fb46fb17",
+        "type": "MySQLdatabase",
+        "name": "Mysql5.7",
+        "host": "172.17.0.2",
+        "port": "3307",
+        "db": "nodered",
+        "tz": "",
+        "charset": ""
+    }
+]
